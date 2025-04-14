@@ -14,21 +14,22 @@ db = SQLAlchemy()
 def create_app():
     app = Flask(__name__)
     
-    # Configure database
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL') or \
-        "postgresql://diego_lugo:6QzgDLILYzkJSva3FYQMBrUbp0ikIQeG@" \
-        "dpg-cvu9efa4d50c73ara9i0-a.oregon-postgres.render.com:5432/" \
-        "moveondb"
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    # Force Render DB connection (remove the os.getenv() fallback temporarily)
+    app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://diego_lugo:6QzgDLILYzkJSva3FYQMBrUbp0ikIQeG@dpg-cvu9efa4d50c73ara9i0-a.oregon-postgres.render.com:5432/moveondb"
     
-    # Initialize extensions with app
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+        'connect_args': {
+            'sslmode': 'require'  # Important for Render
+        }
+    }
+    
     db.init_app(app)
     CORS(app)
 
-    # Create tables (only if they don't exist)
     with app.app_context():
         db.create_all()
-        print("✓ Database tables initialized")
+        print("✓ Tables created successfully!")
     
     return app
 
