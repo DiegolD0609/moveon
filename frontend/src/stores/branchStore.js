@@ -23,7 +23,7 @@ export const useBranchStore = defineStore('branch', {
     async submitCustomer(data) {
         this.isLoading = true  
       try {
-        const response = await api.post('/branches/nearest', data)
+        const response = await api.post('/api/branches/nearest', data)
         this.customerData = data
         this.nearestBranch = response.data.nearest_branch
         this.distance = response.data.distance_km  
