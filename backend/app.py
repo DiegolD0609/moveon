@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, abort, Blueprint
 from .models import db, Customer, Motorbike, Branch
 from dotenv import load_dotenv
 import os
@@ -7,7 +7,9 @@ import requests
 from time import sleep
 from .extensions import db, cors
 
+
 load_dotenv()
+api_bp = Blueprint('api', __name__, url_prefix='/api')
 
 def create_app():
     app = Flask(__name__)
@@ -292,6 +294,8 @@ def get_nearest_branch_legacy():
         return jsonify({"error": "Internal server error"}), 500
 
 # Vue.js sirca la aplicación
+
+
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
