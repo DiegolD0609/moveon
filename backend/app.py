@@ -6,6 +6,7 @@ from math import radians, sin, cos, sqrt, atan2
 import requests
 from time import sleep
 from flask_cors import CORS
+from flask_sqlalchemy import SQLAlchemy
 
 load_dotenv()
 db = SQLAlchemy()
