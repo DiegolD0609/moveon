@@ -11,7 +11,8 @@ load_dotenv()
 
 # inicializar la aplicacion de flask y la base de datos
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT', '5432')}/{os.getenv('DB_NAME')}"
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('postgresql://diego_lugo:6QzgDLILYzkJSva3FYQMBrUbp0ikIQeG@dpg-cvu9efa4d50c73ara9i0-a.oregon-postgres.render.com/moveondb')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 CORS(app)
 
