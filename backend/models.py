@@ -1,4 +1,4 @@
-from app import db  # Se importa la instancia de la base de datos desde app.py
+from .app import db  # Se importa la instancia de la base de datos desde app.py
 
 # Se definen los modelos de la base de datos
 class Customer(db.Model):
