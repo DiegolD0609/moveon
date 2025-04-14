@@ -5,8 +5,7 @@ import os
 from math import radians, sin, cos, sqrt, atan2
 import requests
 from time import sleep
-from flask_cors import CORS
-from flask_sqlalchemy import SQLAlchemy
+from .extensions import db, cors
 
 load_dotenv()
 
@@ -28,9 +27,11 @@ def create_app():
     
     # Initialize extensions
     db.init_app(app)
-    CORS(app)
+    cors.init_app(app)
     
     with app.app_context():
+        # Import models here to avoid circular imports
+        from . import models
         db.create_all()
     
     return app
