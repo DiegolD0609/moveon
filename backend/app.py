@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from .models import db, Customer, Motorbike, Branch
 from dotenv import load_dotenv
 import os
@@ -6,6 +6,7 @@ from math import radians, sin, cos, sqrt, atan2
 import requests
 from time import sleep
 from .extensions import db, cors
+
 
 load_dotenv()
 
@@ -37,8 +38,6 @@ def create_app():
 
 app = create_app()
 
-
-app = create_app()
 
 # Constantes
 EARTH_RADIUS_KM = 6371.0
@@ -289,6 +288,20 @@ def get_motorbikes():
     } for m in motorbikes])
 
 # Se valida que la API esté funcionando
-@app.route('/')
-def home():
-    return {"status": "OK", "message": "Flask backend is running"}
+# se configura vue.js para que sirva la aplicación
+app.static_folder = os.path.abspath('../frontend/dist')  # Adjust path as needed
+
+# Vue.js sirca la aplicación
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve_vue(path):
+    # Manejar rutas estáticas
+    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
+        return send_from_directory(app.static_folder, path)
+    # Devolver el archivo index.html para cualquier otra ruta
+    return send_from_directory(app.static_folder, 'index.html')
+
+# Verificar el estado de la API
+@app.route('/api/status')
+def status():
+    return {"status": "OK"}
