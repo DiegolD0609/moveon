@@ -10,11 +10,11 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-  // Add these critical production settings:
-  base: '/',  // Ensures assets are loaded from root
+
+  base: '/', 
   build: {
-    outDir: '../backend/static',  // Build directly into Flask's static folder
-    emptyOutDir: true,  // Cleans the directory before build
-    assetsDir: 'assets'  // Organized asset directory
+    outDir: '../frontend/dist', 
+    emptyOutDir: true, 
+    assetsDir: 'assets'  
   }
 })
