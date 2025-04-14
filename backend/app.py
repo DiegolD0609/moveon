@@ -9,27 +9,29 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 
 load_dotenv()
-db = SQLAlchemy()
 
 def create_app():
     app = Flask(__name__)
     
-    # Force Render DB connection (remove the os.getenv() fallback temporarily)
-    app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://diego_lugo:6QzgDLILYzkJSva3FYQMBrUbp0ikIQeG@dpg-cvu9efa4d50c73ara9i0-a.oregon-postgres.render.com:5432/moveondb"
+    # Configure database
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', '').replace(
+        'postgres://', 'postgresql://') or \
+        "postgresql://diego_lugo:6QzgDLILYzkJSva3FYQMBrUbp0ikIQeG@" \
+        "dpg-cvu9efa4d50c73ara9i0-a.oregon-postgres.render.com:5432/moveondb"
     
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
         'connect_args': {
-            'sslmode': 'require'  # Important for Render
+            'sslmode': 'require'
         }
     }
     
+    # Initialize extensions
     db.init_app(app)
     CORS(app)
-
+    
     with app.app_context():
         db.create_all()
-        print("✓ Tables created successfully!")
     
     return app
 
