@@ -109,7 +109,13 @@ const states = ref([
 ]);
 
 onMounted(async () => {
-  await branchStore.fetchMotorbikes()
+  console.log('Fetching motorbikes...')
+  try {
+    await branchStore.fetchMotorbikes()
+    console.log('Motorbikes fetched:', branchStore.motorbikes)
+  } catch (error) {
+    console.error('Error fetching motorbikes:', error)
+  }
 })
 
 const handleSubmit = async () => {
