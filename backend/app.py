@@ -93,20 +93,21 @@ def haversine_distance(lat1, lon1, lat2, lon2):
     return EARTH_RADIUS_KM * c
 
 # Geocodificar una dirección simple
-@app.cli.command('init-db')
-def init_db():
-    """Initialize the database."""
+@app.cli.command('seed-data')
+def seed_data():
+    """Seed initial data without dropping tables."""
     with app.app_context():
-        db.drop_all()
-        db.create_all()
-        # Pre cargar datos de prueba
-        # Se establecen las dos tablas de la base de datos: Customer y Motorbike
+        # Only seed if tables are empty
         if not Motorbike.query.first():
-            bike1 = Motorbike(model='R6', brand='Yamaha', color='Blue', year='2020')
-            bike2 = Motorbike(model='DUKE 390', brand='KTM', color='Orange' , year='2023')
-            db.session.add_all([bike1, bike2])
+            bikes = [
+                Motorbike(model='R6', brand='Yamaha', color='Blue', year='2020'),
+                Motorbike(model='DUKE 390', brand='KTM', color='Orange', year='2023')
+            ]
+            db.session.add_all(bikes)
             db.session.commit()
-            print("Preloaded motorbike data!")
+            print(f"Seeded {len(bikes)} motorbikes")
+        else:
+            print("Motorbikes already exist - skipping seeding")
 # Cargar una sucursal con información de geolocalización
 @app.route('/api/branches', methods=['POST'])
 def create_branch():
