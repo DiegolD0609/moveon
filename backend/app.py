@@ -106,6 +106,22 @@ def seed_data():
             print(f"Seeded {len(bikes)} motorbikes")
         else:
             print("Motorbikes already exist - skipping seeding")
+
+# Se obtiene la lista de Motocicicletas disponibles
+@app.route('/api/motorbikes', methods=['GET'])
+def get_motorbikes():
+    motorbikes = Motorbike.query.all()
+    return jsonify([{
+        'id': m.id,
+        'brand': m.brand,
+        'model': m.model,
+        'color': m.color
+    } for m in motorbikes])
+
+# Se valida que la API esté funcionando
+# se configura vue.js para que sirva la aplicación
+app.static_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), '../frontend/dist'))
+
 # Cargar una sucursal con información de geolocalización
 @app.route('/api/branches', methods=['POST'])
 def create_branch():
@@ -275,26 +291,15 @@ def get_nearest_branch_legacy():
         app.logger.error(f"Error in legacy nearest branch: {str(e)}")
         return jsonify({"error": "Internal server error"}), 500
 
-# Se obtiene la lista de Motocicicletas disponibles
-@app.route('/api/motorbikes', methods=['GET'])
-def get_motorbikes():
-    motorbikes = Motorbike.query.all()
-    return jsonify([{
-        'id': m.id,
-        'brand': m.brand,
-        'model': m.model,
-        'color': m.color
-    } for m in motorbikes])
-
-# Se valida que la API esté funcionando
-# se configura vue.js para que sirva la aplicación
-app.static_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), '../frontend/dist'))
-
 # Vue.js sirca la aplicación
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve_vue(path):
+
+    if path.startswith('api/'):
+        abort(404)
+    
     static_dir = app.static_folder
     
     # Check if the requested file exists
