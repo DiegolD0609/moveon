@@ -7,18 +7,17 @@ const api = axios.create({
   }
 })
 
-// Add request interceptor
+
 api.interceptors.request.use(config => {
-  // You can add auth tokens here if needed
-  // config.headers.Authorization = `Bearer ${token}`
+
   return config
 })
 
-// Add response interceptor
+
 api.interceptors.response.use(
   response => response,
   error => {
-    // Handle errors globally
+
     if (error.response) {
       console.error('API Error:', error.response.status, error.response.data)
     } else {
