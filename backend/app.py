@@ -9,15 +9,21 @@ from .extensions import db, cors
 
 
 load_dotenv()
-api_bp = Blueprint('api', __name__, url_prefix='/api')
 
 def create_app():
     app = Flask(__name__)
     
-    # Configure database - FORCE Render connection
+    cors.init_app(app, resources={
+        r"/api/*": {
+            "origins": "*",
+            "methods": ["GET", "POST", "OPTIONS"],
+            "allow_headers": ["Content-Type"]
+        }
+    })
+    # Configuracion de base de datos
     app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://diego_lugo:6QzgDLILYzkJSva3FYQMBrUbp0ikIQeG@dpg-cvu9efa4d50c73ara9i0-a.oregon-postgres.render.com:5432/moveondb"
     
-    # Required configuration for Render
+    # Configuración de la base de datos para Render
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
         'connect_args': {
@@ -300,7 +306,7 @@ def get_nearest_branch_legacy():
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve_vue(path):
-
+    # Explicitly exclude API routes
     if path.startswith('api/'):
         abort(404)
     
