@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import api from '@/api/axios'  
 
 export const useBranchStore = defineStore('branch', {
+  
   state: () => ({
     customerData: null,
     nearestBranch: null,
@@ -11,8 +12,9 @@ export const useBranchStore = defineStore('branch', {
   actions: {
     async fetchMotorbikes() {
       try {
-        const response = await api.get('/motorbikes')  
+        const response = await api.get('/api/motorbikes')  
         this.motorbikes = response.data
+        console.log('API Base URL:', import.meta.env.VITE_API_URL || 'Using relative URL')
       } catch (error) {
         console.error('Error fetching motorbikes:', error)
         throw error  
