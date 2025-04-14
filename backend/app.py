@@ -288,7 +288,7 @@ def get_motorbikes():
 
 # Se valida que la API esté funcionando
 # se configura vue.js para que sirva la aplicación
-app.static_folder = os.path.abspath('../frontend/dist')  # Adjust path as needed
+app.static_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), '../frontend/dist'))
 
 # Vue.js sirca la aplicación
 
@@ -296,16 +296,19 @@ app.static_folder = os.path.abspath('../frontend/dist')  # Adjust path as needed
 @app.route('/<path:path>')
 def serve_vue(path):
     static_dir = app.static_folder
-    file_path = os.path.join(static_dir, path)
     
-    # Serve existing files
-    if path and os.path.exists(file_path) and not file_path.endswith('index.html'):
+    # Check if the requested file exists
+    if path and os.path.exists(os.path.join(static_dir, path)):
         return send_from_directory(static_dir, path)
     
-    # Fallback to index.html
+    # Fallback to index.html for Vue Router
     return send_from_directory(static_dir, 'index.html')
 
-# API Routes
+# Your API routes
 @app.route('/api/status')
 def status():
     return {"status": "OK"}
+
+if __name__ == '__main__':
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
