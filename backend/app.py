@@ -7,7 +7,6 @@ import requests
 from time import sleep
 from .extensions import db, cors
 
-
 load_dotenv()
 
 def create_app():
@@ -292,16 +291,21 @@ def get_motorbikes():
 app.static_folder = os.path.abspath('../frontend/dist')  # Adjust path as needed
 
 # Vue.js sirca la aplicación
+
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve_vue(path):
-    # Manejar rutas estáticas
-    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
-        return send_from_directory(app.static_folder, path)
-    # Devolver el archivo index.html para cualquier otra ruta
-    return send_from_directory(app.static_folder, 'index.html')
+    static_dir = app.static_folder
+    file_path = os.path.join(static_dir, path)
+    
+    # Serve existing files
+    if path and os.path.exists(file_path) and not file_path.endswith('index.html'):
+        return send_from_directory(static_dir, path)
+    
+    # Fallback to index.html
+    return send_from_directory(static_dir, 'index.html')
 
-# Verificar el estado de la API
+# API Routes
 @app.route('/api/status')
 def status():
     return {"status": "OK"}
