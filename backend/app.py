@@ -8,17 +8,30 @@ from time import sleep
 from flask_cors import CORS
 
 load_dotenv()
+db = SQLAlchemy()
 
-# inicializar la aplicacion de flask y la base de datos
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = (
-    "postgresql://diego_lugo:6QzgDLILYzkJSva3FYQMBrUbp0ikIQeG@"
-    "dpg-cvu9efa4d50c73ara9i0-a.oregon-postgres.render.com:5432/"
-    "moveondb"
-)
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db.init_app(app)
-CORS(app)
+def create_app():
+    app = Flask(__name__)
+    
+    # Configure database
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL') or \
+        "postgresql://diego_lugo:6QzgDLILYzkJSva3FYQMBrUbp0ikIQeG@" \
+        "dpg-cvu9efa4d50c73ara9i0-a.oregon-postgres.render.com:5432/" \
+        "moveondb"
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    
+    # Initialize extensions with app
+    db.init_app(app)
+    CORS(app)
+
+    # Create tables (only if they don't exist)
+    with app.app_context():
+        db.create_all()
+        print("✓ Database tables initialized")
+    
+    return app
+
+app = create_app()
 
 # Constantes
 EARTH_RADIUS_KM = 6371.0
