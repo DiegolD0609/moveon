@@ -12,29 +12,31 @@ load_dotenv()
 def create_app():
     app = Flask(__name__)
     
-    # Configure database
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', '').replace(
-        'postgres://', 'postgresql://') or \
-        "postgresql://diego_lugo:6QzgDLILYzkJSva3FYQMBrUbp0ikIQeG@" \
-        "dpg-cvu9efa4d50c73ara9i0-a.oregon-postgres.render.com:5432/moveondb"
+    # Configure database - FORCE Render connection
+    app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://diego_lugo:6QzgDLILYzkJSva3FYQMBrUbp0ikIQeG@dpg-cvu9efa4d50c73ara9i0-a.oregon-postgres.render.com:5432/moveondb"
     
+    # Required configuration for Render
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
         'connect_args': {
-            'sslmode': 'require'
+            'sslmode': 'require'  # Essential for Render
         }
     }
     
     # Initialize extensions
     db.init_app(app)
     cors.init_app(app)
+
+    print("Using DB URL:", app.config['SQLALCHEMY_DATABASE_URI'])
     
     with app.app_context():
-        # Import models here to avoid circular imports
         from . import models
         db.create_all()
     
     return app
+
+app = create_app()
+
 
 app = create_app()
 
